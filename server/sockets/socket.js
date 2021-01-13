@@ -26,16 +26,17 @@ io.on('connection', (client) => {
 
     client.on('disconnect', () => {
         let clientBorrado = usuarios.delClient(client.id);
-        console.log('Borrando ', clientBorrado);
+
         client.broadcast.to(clientBorrado.sala).emit('crearMsg', crearMensaje('Admin', 'El usuario ' + clientBorrado.name + ' se desconecto'));
-        //client.broadcast.to(clientBorrado.sala).emit('listaUsuarios', { usuarios: usuarios.getClientOnSala(clientBorrado.sala) });
+        client.broadcast.to(clientBorrado.sala).emit('listaUsuarios', { usuarios: usuarios.getClientOnSala(clientBorrado.sala) });
 
     });
 
-    client.on('enviarMensaje', (data) => {
+    client.on('enviarMensaje', (data, callback) => {
         let cliente = usuarios.getClient(client.id);
         let mensaje = crearMensaje(cliente.name, data.mensaje);
         client.broadcast.to(cliente.sala).emit('crearMsg', mensaje);
+        callback(mensaje);
     });
 
     client.on('msgPrivado', (data) => {
@@ -49,5 +50,7 @@ io.on('connection', (client) => {
         let mensaje = crearMensaje(cliente.name, data.mensaje);
         client.broadcast.to(data.destino).emit('crearMsg', mensaje);
     });
+
+
 
 });

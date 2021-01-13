@@ -20,6 +20,7 @@ require('./sockets/socket');
 
 
 
+//server.listen(port, '192.168.0.110', (err) => {
 server.listen(port, (err) => {
 
     if (err) throw new Error(err);
